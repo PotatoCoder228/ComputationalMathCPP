@@ -30,7 +30,7 @@ namespace common_utils {
             UserCommand arg;
             arg.parse_command(command);
             arg.activate(*this);
-            if(arg.get_callback() == arg.exit_command){
+            if(arg.get_callback() == exit_command){
                 is_running = false;
                 continue;
             }

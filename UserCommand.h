@@ -9,18 +9,19 @@
 #include "Console.h"
 
 namespace common_utils {
+    void help_command(Console& console);
+    void nle_command(Console& console);
+    void snle_command(Console& console);
+    void exit_command(Console& console);
+    void undefined_command(Console& console);
     class UserCommand {
+        typedef void (*func)(Console&);
     private:
-        void (*callback)(Console&);
+        func callback;
     public:
         void parse_command(std::string& arg);
-        static void help_command(Console& console);
-        static void nle_command(Console& console);
-        static void snle_command(Console& console);
-        static void exit_command(Console& console);
-        static void undefined_command(Console& console);
         bool activate(Console& console) const;
-        void (*get_callback())(Console&);
+        func get_callback();
     };
 } // common_utils
 
