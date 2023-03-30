@@ -4,6 +4,7 @@
 
 #ifndef COMPUTATIONALMATHCPP_CONSOLE_H
 #define COMPUTATIONALMATHCPP_CONSOLE_H
+
 #include <vector>
 
 namespace common_utils {
@@ -13,6 +14,7 @@ namespace common_utils {
         bool is_running;
     public:
         void run();
+
         void init();
     };
 

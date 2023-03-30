@@ -7,10 +7,11 @@
 #include "UserCommand.h"
 
 namespace common_utils {
-    static const std::string GREETING("████──████──███──████──███──████──████──████──████───███──████──████──████──████\n█──█──█──█───█───█──█───█───█──█──█──█──█──█──█──██──█────█──█──█──█──█──█──█──█\n████──█──█───█───████───█───█──█──█─────█──█──█──██──███──████────██────██──████\n█─────█──█───█───█──█───█───█──█──█──█──█──█──█──██──█────█─█───██────██────█──█\n█─────████───█───█──█───█───████──████──████──████───███──█─█───████──████──████");
+    static const std::string GREETING(
+            "████──████──███──████──███──████──████──████──████───███──████──████──████──████\n█──█──█──█───█───█──█───█───█──█──█──█──█──█──█──██──█────█──█──█──█──█──█──█──█\n████──█──█───█───████───█───█──█──█─────█──█──█──██──███──████────██────██──████\n█─────█──█───█───█──█───█───█──█──█──█──█──█──█──██──█────█─█───██────██────█──█\n█─────████───█───█──█───█───████──████──████──████───███──█─█───████──████──████");
     static const std::string INPUT_ERR_MSG("Некорректный ввод, попробуйте снова.");
 
-    void Console::init(){
+    void Console::init() {
         std::cout << GREETING << std::endl;
     }
 
@@ -18,11 +19,11 @@ namespace common_utils {
         using std::cin;
         using std::cout;
         this->is_running = true;
-        while(this->is_running){
-            static std::string command;
-            cout<<"??";
+        while (this->is_running) {
+            std::string command;
+            cout << "??";
             getline(cin, command);
-            if(cin.eof()){
+            if (command.empty()) {
                 cout << INPUT_ERR_MSG << std::endl;
                 continue;
             }
@@ -30,7 +31,7 @@ namespace common_utils {
             UserCommand arg;
             arg.parse_command(command);
             arg.activate(*this);
-            if(arg.get_callback() == exit_command){
+            if (arg.get_callback() == exit_command) {
                 is_running = false;
                 continue;
             }

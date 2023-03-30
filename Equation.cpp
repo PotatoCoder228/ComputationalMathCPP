@@ -2,55 +2,140 @@
 // Created by sasha on 29.03.2023.
 //
 
+#include <iostream>
 #include "Equation.h"
 
 namespace common_utils {
-    double func1(double x){
-        return 2.74*x*x*x-1.93*x*x-15.28*x-3.72;
+    double func1(double x) {
+        return (2.74 * x * x * x) - (1.93 * x * x) - (15.28 * x) - 3.72;
     }
-    double func1_der(double x){
-        return 8.22*x*x-3.86*x-15.28;
+
+    double func1_der(double x) {
+        return (8.22 * x * x) - (3.86 * x) - 15.28;
     }
-    double func2(double x){
-        return -1.38*x*x*x-5.42*x*x+2.57*x+10.95;
+
+    double func1_der2(double x){
+        return (15.44*x)-3.86;
     }
-    double func2_der(double x){
-        return -4.14*x*x-10.84*x+2.57;
+
+    double func2(double x) {
+        return (-1.38 * x * x * x) - (5.42 * x * x) + (2.57 * x) + 10.95;
     }
-    double func3(double x){
-        return x*x*x+2.84*x*x-5.606*x-14.766;
+
+    double func2_der(double x) {
+        return (-4.14 * x * x) - (10.84 * x) + 2.57;
     }
-    double func3_der(double x){
-        return 3*x*x+5.68*x-5.606;
+    double func2_der2(double x){
+        return (-8.28*x)-10.84;
     }
-    Equation::Equation(solv_func solv, func fun, func der) {
+
+    double func3(double x) {
+        return (x * x * x) + (2.84 * x * x) - (5.606 * x) - 14.766;
+    }
+
+    double func3_der(double x) {
+        return (3 * x * x) + (5.68 * x) - 5.606;
+    }
+    double func3_der2(double x){
+        return (6*x)+5.68;
+    }
+
+    Equation::Equation(solv_func solv, func fun, func der, func der2) {
         this->derivative = der;
         this->function = fun;
         this->solver = solv;
+        this->derivative2 = der2;
     }
 
     Equation::~Equation() = default;
 
-    void Equation::set_interval(double begin, double end){
+    void Equation::set_interval(double begin, double end) {
         this->start = begin;
         this->finish = end;
     }
 
-    void Equation::set_eps(double e){
+    void Equation::set_eps(double e) {
         this->eps = e;
     }
 
-    double Equation::solve(){
-        return this->solver();
+    bool Equation::root_validation(Equation &eq) {
+        double buf = eq.function(eq.start) * eq.function(eq.finish);
+        if (buf >= 0) {
+            std::cout << "Корней на отрезке не существует." << std::endl;
+            return false;
+        }
+        buf = eq.derivative(eq.start) * eq.derivative(eq.finish);
+        if (buf >= 0) {
+            return true;
+        }
+        std::cout << "Невалидный интервал. \\_0_0_/" << std::endl;
+        return false;
     }
 
-    double Equation::half_del_method(){
-
+    double Equation::solve() {
+        return this->solver(*this);
     }
-    double Equation::newton_method(){
 
+    double Equation::half_del_method(Equation &eq) {
+        double x;
+        double iter_counter = 0;
+        double buf;
+        do {
+            iter_counter++;
+            x = (eq.start + eq.finish) / 2;
+            buf = std::abs(eq.function(x));
+            if (std::abs(eq.start - eq.finish) <= eq.eps) break;
+            if (buf * eq.function(eq.finish) < 0) {
+                eq.start = x;
+            } else {
+                eq.finish = x;
+            }
+        } while (buf > eq.eps);
+        std::cout << "Количество итераций: " << iter_counter << std::endl;
+        std::cout << "Искомый корень: " << x << std::endl;
+        return x;
     }
-    double Equation::simple_iter_method(){
 
+    double Equation::newton_method(Equation &eq) {
+        double x = eq.finish;
+        if(eq.function(eq.start)*eq.derivative2(eq.start)>0){
+            x = eq.start;
+        }
+        int iter_counter = 0;
+        double func;
+        double func_der;
+        double prev_x;
+        do {
+            iter_counter++;
+            func = eq.function(x);
+            func_der = eq.derivative(x);
+            prev_x = x;
+            x = prev_x - (func / func_der);
+        } while (std::abs(func / func_der) > eq.eps && std::abs(func) > eq.eps && std::abs(x - prev_x) > eq.eps);
+        std::cout << "Количество итераций: " << iter_counter << std::endl;
+        std::cout << "Искомый корень: " << x << std::endl;
+        return x;
+    }
+
+    double Equation::simple_iter_method(Equation &eq) {
+        double x = eq.start;
+        double abs_f_start;
+        double abs_f_finish;
+        double max;
+        double lambda;
+        int iter_counter = 0;
+        double prev_x = x;
+        do{
+            iter_counter++;
+            abs_f_start = std::abs(eq.derivative(eq.start));
+            abs_f_finish = std::abs(eq.derivative(eq.finish));
+            max = abs_f_start>abs_f_finish?abs_f_start:abs_f_finish;
+            lambda = -(1/(max));
+            prev_x = x;
+            x = x + lambda*eq.function(x);
+        }while(std::abs(prev_x-x) > eq.eps);
+        std::cout << "Количество итераций: " << iter_counter << std::endl;
+        std::cout << "Искомый корень: " << x << std::endl;
+        return x;
     }
 } // common_utils
