@@ -22,9 +22,9 @@ namespace common_utils {
 
     static void print_equations() {
         std::cout << "Введите номер уравнения:" << std::endl;
-        std::cout << "1: 2.74*x^3-1.93*x^2-15.28*x-3.72" << std::endl;
-        std::cout << "2: -1.38*x^3-5.42*x^2+2.57*x+10.95" << std::endl;
-        std::cout << "3: x^3+2.84*x^2-5.606*x-14.766" << std::endl;
+        std::cout << "1: "<<eq_1_str << std::endl;
+        std::cout << "2: "<<eq_2_str << std::endl;
+        std::cout << "3: "<<eq_3_str << std::endl;
     }
 
     static void print_methods() {

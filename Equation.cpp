@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <cstdlib>
 #include "Equation.h"
 
 namespace common_utils {
@@ -76,7 +77,31 @@ namespace common_utils {
         return this->solver(*this);
     }
 
+    typedef double (*func)(double x);
+
+    static void draw(double point, func function, double start, double finish){
+        FILE* gp = popen("gnuplot -persistent", "w");
+        fprintf(gp, "set grid\n");
+        fprintf(gp, "set xrange [%lf:%lf]\n", start-10, finish+10);
+        fprintf(gp, "set xlabel \"X axis\"\n");
+        fprintf(gp, "set ylabel \"Y axis\"\n");
+        fprintf(gp, "set style line 2 lc rgb 'black' pt 7\n");
+        fprintf(gp, "plot ");
+        if(function == func1) {
+            fprintf(gp, " %s, ", eq_1_str.c_str());
+        }else if(function == func2) {
+            fprintf(gp, " %s, ", eq_2_str.c_str());
+        }else {
+            fprintf(gp, " %s, ", eq_3_str.c_str());
+        }
+        fprintf(gp, "'-' w p ls 2\n");
+        fprintf(gp, "%lf %lf\ne\n", point, function(point));
+        fflush(gp);
+    }
+
     double Equation::half_del_method(Equation &eq) {
+        double int_begin = eq.start;
+        double int_finish = eq.finish;
         double x;
         double iter_counter = 0;
         double buf;
@@ -84,19 +109,22 @@ namespace common_utils {
             iter_counter++;
             x = (eq.start + eq.finish) / 2;
             buf = std::abs(eq.function(x));
-            if (std::abs(eq.start - eq.finish) <= eq.eps) break;
+            if (std::abs(eq.start - eq.finish) < eq.eps) break;
             if (buf * eq.function(eq.finish) < 0) {
                 eq.start = x;
             } else {
                 eq.finish = x;
             }
         } while (buf > eq.eps);
+        draw(x, eq.function, int_begin, int_finish);
         std::cout << "Количество итераций: " << iter_counter << std::endl;
         std::cout << "Искомый корень: " << x << std::endl;
         return x;
     }
 
     double Equation::newton_method(Equation &eq) {
+        double int_begin = eq.start;
+        double int_finish = eq.finish;
         double x = eq.finish;
         if(eq.function(eq.start)*eq.derivative2(eq.start)>0){
             x = eq.start;
@@ -112,12 +140,15 @@ namespace common_utils {
             prev_x = x;
             x = prev_x - (func / func_der);
         } while (std::abs(func / func_der) > eq.eps && std::abs(func) > eq.eps && std::abs(x - prev_x) > eq.eps);
+        draw(x, eq.function, int_begin, int_finish);
         std::cout << "Количество итераций: " << iter_counter << std::endl;
         std::cout << "Искомый корень: " << x << std::endl;
         return x;
     }
 
     double Equation::simple_iter_method(Equation &eq) {
+        double int_begin = eq.start;
+        double int_finish = eq.finish;
         double x = eq.start;
         double abs_f_start;
         double abs_f_finish;
@@ -134,6 +165,7 @@ namespace common_utils {
             prev_x = x;
             x = x + lambda*eq.function(x);
         }while(std::abs(prev_x-x) > eq.eps);
+        draw(x, eq.function, int_begin, int_finish);
         std::cout << "Количество итераций: " << iter_counter << std::endl;
         std::cout << "Искомый корень: " << x << std::endl;
         return x;
