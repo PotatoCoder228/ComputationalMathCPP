@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <cmath>
 #include "Equation.h"
 
 namespace common_utils {
@@ -110,8 +111,8 @@ namespace common_utils {
         do {
             iter_counter++;
             x = (eq.start + eq.finish) / 2;
-            buf = std::abs(eq.function(x));
-            if (std::abs(eq.start - eq.finish) < eq.eps) break;
+            buf = std::fabs(eq.function(x));
+            if (std::fabs(eq.start - eq.finish) < eq.eps) break;
             if (buf * eq.function(eq.finish) < 0) {
                 eq.start = x;
             } else {
@@ -141,7 +142,7 @@ namespace common_utils {
             func_der = eq.derivative(x);
             prev_x = x;
             x = prev_x - (func / func_der);
-        } while (std::abs(func / func_der) > eq.eps && std::abs(func) > eq.eps && std::abs(x - prev_x) > eq.eps);
+        } while (std::fabs(func / func_der) > eq.eps && std::fabs(func) > eq.eps && std::fabs(x - prev_x) > eq.eps);
         draw(x, eq.function, int_begin, int_finish);
         std::cout << "Количество итераций: " << iter_counter << std::endl;
         std::cout << "Искомый корень: " << x << std::endl;
@@ -149,8 +150,8 @@ namespace common_utils {
     }
 
     bool Equation::check_simple_iter_convergence(double lambda) {
-        double buf_1 = std::abs(1 + (this->derivative(this->start) * lambda));
-        double buf_2 = std::abs(1 + (this->derivative(this->finish) * lambda));
+        double buf_1 = std::fabs(1 + (this->derivative(this->start) * lambda));
+        double buf_2 = std::fabs(1 + (this->derivative(this->finish) * lambda));
         if (buf_1 >= 1 || buf_2 >= 1) {
             return false;
         }
@@ -161,8 +162,8 @@ namespace common_utils {
         double int_begin = eq.start;
         double int_finish = eq.finish;
         double x = eq.start;
-        double abs_f_start = std::abs(eq.derivative(eq.start));
-        double abs_f_finish = std::abs(eq.derivative(eq.finish));
+        double abs_f_start = std::fabs(eq.derivative(eq.start));
+        double abs_f_finish = std::fabs(eq.derivative(eq.finish));
         double max = abs_f_start > abs_f_finish ? abs_f_start : abs_f_finish;
         double lambda = -(1 / (max));
         bool checker = eq.check_simple_iter_convergence(lambda);
@@ -176,7 +177,7 @@ namespace common_utils {
             iter_counter++;
             prev_x = x;
             x = x + lambda * eq.function(x);
-        } while (std::abs(prev_x - x) > eq.eps);
+        } while (std::fabs(prev_x - x) > eq.eps);
         draw(x, eq.function, int_begin, int_finish);
         std::cout << "Количество итераций: " << iter_counter << std::endl;
         std::cout << "Искомый корень: " << x << std::endl;

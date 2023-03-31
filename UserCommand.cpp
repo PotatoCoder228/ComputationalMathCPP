@@ -131,23 +131,59 @@ namespace common_utils {
         std::cout << "   " << sys_2_2_str << std::endl;
     }
 
+    static bool set_system(EquationsSystem &system) {
+        print_systems();
+        int sys_num;
+        std::cin >> sys_num;
+        switch (sys_num) {
+            case 1:
+                system.first = sys_func_11;
+                system.second = sys_func_12;
+                system.x_11 = sys_11_dx;
+                system.y_11 = sys_11_dy;
+                system.x_21 = sys_12_dx;
+                system.y_21 = sys_12_dy;
+                return true;
+            case 2:
+                system.first = sys_func_21;
+                system.second = sys_func_22;
+                system.x_11 = sys_21_dx;
+                system.y_11 = sys_21_dy;
+                system.x_21 = sys_22_dx;
+                system.y_21 = sys_22_dy;
+                return true;
+            default:
+                return false;
+        }
+    }
+
     void snle_command(Console &console) {
         std::string filename;
         std::cout << "Введите имя файла, откуда читать интервал/погрешность:" << std::endl;
         getline(std::cin, filename);
         std::ifstream file;
-        print_systems();
-        int sys_num;
-        std::cin >> sys_num;
         EquationsSystem system;
-        std::cout << "Введите x0:" << std::endl;
-        std::cin >> system.x0;
-        std::cout << "Введите y0:" << std::endl;
-        std::cin >> system.y0;
-        std::cout << "Введите точность:" << std::endl;
-        std::cin >> system.eps;
-
-        std::cin.ignore();
+        system.sys_matrix_init();
+        bool valid = set_system(system);
+        if (!valid) {
+            std::cout << "Вы ввели неверный номер системы";
+            return;
+        }
+        if (!filename.empty()) {
+            file.open(filename, std::ifstream::in);
+            file >> system.x0;
+            file >> system.y0;
+            file >> system.eps;
+        } else {
+            std::cout << "Введите x0:" << std::endl;
+            std::cin >> system.x0;
+            std::cout << "Введите y0:" << std::endl;
+            std::cin >> system.y0;
+            std::cout << "Введите точность:" << std::endl;
+            std::cin >> system.eps;
+            std::cin.ignore();
+        }
+        system.solve();
     }
 
     void exit_command(Console &console) {
