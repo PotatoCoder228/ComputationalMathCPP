@@ -9,6 +9,7 @@ namespace common_utils {
     static std::string eq_1_str("2.74*(x**3)-1.93*(x**2)-15.28*x-3.72");
     static std::string eq_2_str("(-1.38)*(x**3)-5.42*(x**2)+2.57*x+10.95");
     static std::string eq_3_str("x**3+2.84*(x**2)-5.606*x-14.766");
+
     double func1(double x);
 
     double func1_der(double x);
@@ -56,6 +57,8 @@ namespace common_utils {
         double solve();
 
         bool root_validation(Equation &);
+
+        bool check_simple_iter_convergence(double lambda);
 
         ~Equation();
     };

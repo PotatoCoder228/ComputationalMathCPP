@@ -4,6 +4,7 @@
 
 #include "UserCommand.h"
 #include "Equation.h"
+#include "EquationsSystem.h"
 #include <fstream>
 
 namespace common_utils {
@@ -22,9 +23,9 @@ namespace common_utils {
 
     static void print_equations() {
         std::cout << "Введите номер уравнения:" << std::endl;
-        std::cout << "1: "<<eq_1_str << std::endl;
-        std::cout << "2: "<<eq_2_str << std::endl;
-        std::cout << "3: "<<eq_3_str << std::endl;
+        std::cout << "1: " << eq_1_str << std::endl;
+        std::cout << "2: " << eq_2_str << std::endl;
+        std::cout << "3: " << eq_3_str << std::endl;
     }
 
     static void print_methods() {
@@ -88,7 +89,7 @@ namespace common_utils {
 
     void nle_command(Console &console) {
         std::string filename;
-        std::cout << "Введите имя файла, откуда читать интервал/погрешность:"<<std::endl;
+        std::cout << "Введите имя файла, откуда читать интервал/погрешность:" << std::endl;
         getline(std::cin, filename);
         std::ifstream file;
         double start = 0;
@@ -122,8 +123,31 @@ namespace common_utils {
         std::cin.ignore();
     }
 
-    void snle_command(Console &console) {
+    static void print_systems() {
+        std::cout << "Выберите одну из систем:" << std::endl;
+        std::cout << "1: " << sys_1_1_str << std::endl;
+        std::cout << "   " << sys_1_2_str << std::endl;
+        std::cout << "2: " << sys_2_1_str << std::endl;
+        std::cout << "   " << sys_2_2_str << std::endl;
+    }
 
+    void snle_command(Console &console) {
+        std::string filename;
+        std::cout << "Введите имя файла, откуда читать интервал/погрешность:" << std::endl;
+        getline(std::cin, filename);
+        std::ifstream file;
+        print_systems();
+        int sys_num;
+        std::cin >> sys_num;
+        EquationsSystem system;
+        std::cout << "Введите x0:" << std::endl;
+        std::cin >> system.x0;
+        std::cout << "Введите y0:" << std::endl;
+        std::cin >> system.y0;
+        std::cout << "Введите точность:" << std::endl;
+        std::cin >> system.eps;
+
+        std::cin.ignore();
     }
 
     void exit_command(Console &console) {

@@ -15,8 +15,8 @@ namespace common_utils {
         return (8.22 * x * x) - (3.86 * x) - 15.28;
     }
 
-    double func1_der2(double x){
-        return (15.44*x)-3.86;
+    double func1_der2(double x) {
+        return (15.44 * x) - 3.86;
     }
 
     double func2(double x) {
@@ -26,8 +26,9 @@ namespace common_utils {
     double func2_der(double x) {
         return (-4.14 * x * x) - (10.84 * x) + 2.57;
     }
-    double func2_der2(double x){
-        return (-8.28*x)-10.84;
+
+    double func2_der2(double x) {
+        return (-8.28 * x) - 10.84;
     }
 
     double func3(double x) {
@@ -37,8 +38,9 @@ namespace common_utils {
     double func3_der(double x) {
         return (3 * x * x) + (5.68 * x) - 5.606;
     }
-    double func3_der2(double x){
-        return (6*x)+5.68;
+
+    double func3_der2(double x) {
+        return (6 * x) + 5.68;
     }
 
     Equation::Equation(solv_func solv, func fun, func der, func der2) {
@@ -79,19 +81,19 @@ namespace common_utils {
 
     typedef double (*func)(double x);
 
-    static void draw(double point, func function, double start, double finish){
-        FILE* gp = popen("gnuplot -persistent", "w");
+    static void draw(double point, func function, double start, double finish) {
+        FILE *gp = popen("gnuplot -persistent", "w");
         fprintf(gp, "set grid\n");
-        fprintf(gp, "set xrange [%lf:%lf]\n", start-10, finish+10);
+        fprintf(gp, "set xrange [%lf:%lf]\n", start - 10, finish + 10);
         fprintf(gp, "set xlabel \"X axis\"\n");
         fprintf(gp, "set ylabel \"Y axis\"\n");
         fprintf(gp, "set style line 2 lc rgb 'black' pt 7\n");
         fprintf(gp, "plot ");
-        if(function == func1) {
+        if (function == func1) {
             fprintf(gp, " %s, ", eq_1_str.c_str());
-        }else if(function == func2) {
+        } else if (function == func2) {
             fprintf(gp, " %s, ", eq_2_str.c_str());
-        }else {
+        } else {
             fprintf(gp, " %s, ", eq_3_str.c_str());
         }
         fprintf(gp, "'-' w p ls 2\n");
@@ -126,7 +128,7 @@ namespace common_utils {
         double int_begin = eq.start;
         double int_finish = eq.finish;
         double x = eq.finish;
-        if(eq.function(eq.start)*eq.derivative2(eq.start)>0){
+        if (eq.function(eq.start) * eq.derivative2(eq.start) > 0) {
             x = eq.start;
         }
         int iter_counter = 0;
@@ -146,25 +148,35 @@ namespace common_utils {
         return x;
     }
 
+    bool Equation::check_simple_iter_convergence(double lambda) {
+        double buf_1 = std::abs(1 + (this->derivative(this->start) * lambda));
+        double buf_2 = std::abs(1 + (this->derivative(this->finish) * lambda));
+        if (buf_1 >= 1 || buf_2 >= 1) {
+            return false;
+        }
+        return true;
+    }
+
     double Equation::simple_iter_method(Equation &eq) {
         double int_begin = eq.start;
         double int_finish = eq.finish;
         double x = eq.start;
-        double abs_f_start;
-        double abs_f_finish;
-        double max;
-        double lambda;
+        double abs_f_start = std::abs(eq.derivative(eq.start));
+        double abs_f_finish = std::abs(eq.derivative(eq.finish));
+        double max = abs_f_start > abs_f_finish ? abs_f_start : abs_f_finish;
+        double lambda = -(1 / (max));
+        bool checker = eq.check_simple_iter_convergence(lambda);
+        if (!checker) {
+            std::cout << "Метод расходится на этом интервале..." << std::endl;
+            return 0;
+        }
         int iter_counter = 0;
-        double prev_x = x;
-        do{
+        double prev_x;
+        do {
             iter_counter++;
-            abs_f_start = std::abs(eq.derivative(eq.start));
-            abs_f_finish = std::abs(eq.derivative(eq.finish));
-            max = abs_f_start>abs_f_finish?abs_f_start:abs_f_finish;
-            lambda = -(1/(max));
             prev_x = x;
-            x = x + lambda*eq.function(x);
-        }while(std::abs(prev_x-x) > eq.eps);
+            x = x + lambda * eq.function(x);
+        } while (std::abs(prev_x - x) > eq.eps);
         draw(x, eq.function, int_begin, int_finish);
         std::cout << "Количество итераций: " << iter_counter << std::endl;
         std::cout << "Искомый корень: " << x << std::endl;
