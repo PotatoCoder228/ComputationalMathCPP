@@ -13,8 +13,6 @@ namespace common_utils {
         FILE *gp = popen("gnuplot -persistent", "w");
         fprintf(gp, "set grid\n");
         fprintf(gp, "set view 0,0\n");
-        fprintf(gp, "set xlabel \"X axis\"\n");
-        fprintf(gp, "set ylabel \"Y axis\"\n");
         fprintf(gp, "set cont base\n");
         fprintf(gp, "unset surface\n");
         fprintf(gp, "set size square\n");
@@ -67,12 +65,12 @@ namespace common_utils {
             prev_y = this->y0;
             this->x0 = this->x0 + results[0];
             this->y0 = this->y0 + results[1];
-            x_vector.push_back(std::fabs(prev_x - (this->x0)));
-            y_vector.push_back(std::fabs(prev_y - (this->y0)));
-        } while (std::fabs(prev_x - (this->x0)) > this->eps &&
-                 std::fabs(prev_y - (this->y0)) > this->eps);
+            x_vector.push_back(std::fabs(results[0]));
+            y_vector.push_back(std::fabs(results[1]));
+        } while (std::fabs(results[0]) > this->eps &&
+                 std::fabs(results[1]) > this->eps);
         std::cout << "Вектор погрешностей:" << std::endl;
-        for (int i = 0; !x_vector.empty(); i++) {
+        for (int i = x_vector.size(); !x_vector.empty(); i--) {
             std::cout << "x_" << i << ": " << x_vector.back() << std::endl;
             x_vector.pop_back();
             std::cout << "y_" << i << ": " << y_vector.back() << std::endl;
