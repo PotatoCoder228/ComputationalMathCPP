@@ -11,7 +11,7 @@
 namespace common_utils {
 
     static std::string sys_1_1_str = "x**2+y**2-4";
-    static std::string sys_1_2_str = "-3x**2+y";
+    static std::string sys_1_2_str = "-3*(x**2)+y";
     static std::string sys_2_1_str = "x*x*x+x*x+y-6";
     static std::string sys_2_2_str = "x*x-12*y-7";
 

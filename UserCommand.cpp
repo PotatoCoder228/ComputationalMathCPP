@@ -137,6 +137,8 @@ namespace common_utils {
         std::cin >> sys_num;
         switch (sys_num) {
             case 1:
+                system.first_str = sys_1_1_str;
+                system.second_str = sys_1_2_str;
                 system.first = sys_func_11;
                 system.second = sys_func_12;
                 system.x_11 = sys_11_dx;
@@ -145,6 +147,8 @@ namespace common_utils {
                 system.y_21 = sys_12_dy;
                 return true;
             case 2:
+                system.first_str = sys_2_1_str;
+                system.second_str = sys_2_2_str;
                 system.first = sys_func_21;
                 system.second = sys_func_22;
                 system.x_11 = sys_21_dx;

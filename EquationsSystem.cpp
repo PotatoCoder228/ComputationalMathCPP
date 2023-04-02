@@ -11,21 +11,24 @@
 namespace common_utils {
     static void draw_system(EquationsSystem &system) {
         FILE *gp = popen("gnuplot -persistent", "w");
+        if (system.first_str == sys_1_1_str) {
+            fprintf(gp, "f1(x,y)=%s\n", sys_1_1_str.c_str());
+            fprintf(gp, "f2(x,y)=%s\n", sys_1_2_str.c_str());
+        } else {
+            fprintf(gp, "f1(x,y)=%s\n", sys_2_1_str.c_str());
+            fprintf(gp, "f2(x,y)=%s\n", sys_2_2_str.c_str());
+        }
+        fprintf(gp, "set xlabel \"X axis\"\n");
+        fprintf(gp, "set ylabel \"Y axis\"\n");
         fprintf(gp, "set grid\n");
+        fprintf(gp, "set samples 1000,1000\n");
+        fprintf(gp, "set isosamples 10,20\n");
         fprintf(gp, "set view 0,0\n");
         fprintf(gp, "set cont base\n");
         fprintf(gp, "unset surface\n");
         fprintf(gp, "set size square\n");
         fprintf(gp, "set cntrparam levels discrete 0,0\n");
-        if (system.first == sys_func_11) {
-            fprintf(gp, "f1(x,y)=%s\n", sys_1_1_str.c_str());
-            fprintf(gp, "f2(x,y)=%s\n", sys_1_2_str.c_str());
-            fprintf(gp, "splot f1(x,y), f2(x,y)\n");
-        } else {
-            fprintf(gp, "f1(x,y)=%s\n", sys_2_1_str.c_str());
-            fprintf(gp, "f2(x,y)=%s\n", sys_2_2_str.c_str());
-            fprintf(gp, "splot f1(x,y), f2(x,y)\n");
-        }
+        fprintf(gp, "splot f1(x,y), f2(x,y)\n");
         /*
         if (function == func1) {
             fprintf(gp, " %s, ", eq_1_str.c_str());
