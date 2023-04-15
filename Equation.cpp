@@ -17,7 +17,7 @@ namespace common_utils {
     }
 
     double func1_der2(double x) {
-        return (15.44 * x) - 3.86;
+        return (16.44 * x) - 3.86;
     }
 
     double func2(double x) {
@@ -63,13 +63,8 @@ namespace common_utils {
     }
 
     bool Equation::root_validation(Equation &eq) {
-        double buf = eq.function(eq.start) * eq.function(eq.finish);
-        if (buf >= 0) {
-            std::cout << "Корней на отрезке не существует." << std::endl;
-            return false;
-        }
-        buf = eq.derivative(eq.start) * eq.derivative(eq.finish);
-        if (buf >= 0) {
+        if ((eq.derivative(eq.start) * eq.derivative(eq.finish) >= 0)
+        && (eq.function(eq.start) * eq.function(eq.finish) < 0)) {
             return true;
         }
         std::cout << "Невалидный интервал. \\_0_0_/" << std::endl;
@@ -85,7 +80,8 @@ namespace common_utils {
     static void draw(double point, func function, double start, double finish) {
         FILE *gp = popen("gnuplot -persistent", "w");
         fprintf(gp, "set grid\n");
-        fprintf(gp, "set xrange [%lf:%lf]\n", start - 10, finish + 10);
+        fprintf(gp, "set xrange [%lf:%lf]\n", start - 40, finish + 40);
+        fprintf(gp, "set yrange [%lf:%lf]\n", start - 40, finish + 40);
         fprintf(gp, "set xlabel \"X axis\"\n");
         fprintf(gp, "set ylabel \"Y axis\"\n");
         fprintf(gp, "set style line 2 lc rgb 'black' pt 7\n");
@@ -128,9 +124,9 @@ namespace common_utils {
     double Equation::newton_method(Equation &eq) {
         double int_begin = eq.start;
         double int_finish = eq.finish;
-        double x = eq.finish;
-        if (eq.function(eq.start) * eq.derivative2(eq.start) > 0) {
-            x = eq.start;
+        double x = eq.start;
+        if (eq.function(eq.finish) * eq.derivative2(eq.finish) > 0) {
+            x = eq.finish;
         }
         int iter_counter = 0;
         double func;
@@ -142,6 +138,7 @@ namespace common_utils {
             func_der = eq.derivative(x);
             prev_x = x;
             x = prev_x - (func / func_der);
+            printf("x_k - x_(k-1): %lf\n", std::fabs(x - prev_x));
         } while (std::fabs(func / func_der) > eq.eps && std::fabs(func) > eq.eps && std::fabs(x - prev_x) > eq.eps);
         draw(x, eq.function, int_begin, int_finish);
         std::cout << "Количество итераций: " << iter_counter << std::endl;
@@ -166,11 +163,6 @@ namespace common_utils {
         double abs_f_finish = std::fabs(eq.derivative(eq.finish));
         double max = abs_f_start > abs_f_finish ? abs_f_start : abs_f_finish;
         double lambda = -(1 / (max));
-        bool checker = eq.check_simple_iter_convergence(lambda);
-        if (!checker) {
-            std::cout << "Метод расходится на этом интервале..." << std::endl;
-            return 0;
-        }
         int iter_counter = 0;
         double prev_x;
         do {

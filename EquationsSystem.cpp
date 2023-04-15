@@ -29,17 +29,6 @@ namespace common_utils {
         fprintf(gp, "set size square\n");
         fprintf(gp, "set cntrparam levels discrete 0,0\n");
         fprintf(gp, "splot f1(x,y), f2(x,y)\n");
-        /*
-        if (function == func1) {
-            fprintf(gp, " %s, ", eq_1_str.c_str());
-        } else if (function == func2) {
-            fprintf(gp, " %s, ", eq_2_str.c_str());
-        } else {
-            fprintf(gp, " %s, ", eq_3_str.c_str());
-        }
-        fprintf(gp, "'-' w p ls 2\n");
-        fprintf(gp, "%lf %lf\ne\n", point, function(point));
-        */
         fflush(gp);
     }
 

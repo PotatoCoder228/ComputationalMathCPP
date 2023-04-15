@@ -22,7 +22,7 @@ namespace common_utils {
         while (this->is_running) {
             std::string command;
             cout << "??";
-            getline(cin, command);
+            std::cin >> command;
             if (command.empty()) {
                 cout << INPUT_ERR_MSG << std::endl;
                 continue;
